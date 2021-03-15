@@ -12,20 +12,20 @@ import cv2 as cv
 def img_process_train(img):
     train = cv.resize(img, (32, 32), interpolation=cv.INTER_NEAREST)
     train = cv.resize(train, (128, 128), interpolation=cv.INTER_CUBIC)
-    return train
+    return np.array(train).reshape((128, 128, 1)) / 255.
 
 
 def img_process_label(img):
-    return cv.resize(img, (128, 128), interpolation=cv.INTER_CUBIC)
+    return np.array(cv.resize(img, (128, 128), interpolation=cv.INTER_CUBIC)).reshape((128, 128, 1)) / 255.
 
 
 def img_data_list(path, tag='label'):
     if tag == 'train':
         return [img_process_train(
-            cv.imread(os.path.join(path, img_path))) for img_path in os.listdir(path)]
+            cv.imread(os.path.join(path, img_path), cv.IMREAD_GRAYSCALE)) for img_path in os.listdir(path)]
     else:
         return [img_process_label(
-            cv.imread(os.path.join(path, img_path))) for img_path in os.listdir(path)]
+            cv.imread(os.path.join(path, img_path), cv.IMREAD_GRAYSCALE)) for img_path in os.listdir(path)]
 
 
 def data_process(train_path='datasets/train/', test_path='datasets/test/'):

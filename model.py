@@ -21,7 +21,7 @@ class SRCNN(tf.keras.Model):
             activation=tf.nn.relu,
         )
         self.conv3 = tf.keras.layers.Conv2D(
-            filters=3,
+            filters=1,
             kernel_size=[5, 5],
             padding='same',
             activation=tf.nn.relu,
