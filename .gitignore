@@ -1,2 +1,9 @@
 # Project exclude paths
 /venv/
+/datasets/
+/model/
+/result/
+/saved/
+/Train/
+/cifar-10-python.tar/
+/cifar-10-batches-py/
