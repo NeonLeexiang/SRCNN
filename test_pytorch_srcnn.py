@@ -5,7 +5,7 @@
 import os
 import torch
 import copy
-import cudnn
+# import cudnn
 from pytorch_model import pytorch_SRCNN
 from test_pytorch_datasets import TestDataset, TrainDataset
 from torch.utils.data.dataloader import DataLoader
@@ -34,23 +34,38 @@ class AverageMeter(object):
 
 
 def train_and_test_pytorch_srcnn(
-    data_size=100000,
-    test_data_size=1000,
+    data_size=100,
+    test_data_size=10,
     num_channels=1,
     learning_rate=0.0001,
-    batch_size=64,
-    num_epochs=500,
-    num_workers=8,
+    batch_size=10,
+    num_epochs=10,
+    num_workers=2,
     is_training=True,
     model_save_path='pytorch_models/'):
 
+    # TODO: the datasets size of cifar-10 is 500000
     if not os.path.exists(model_save_path):
         print('making dir')
         os.makedirs(model_save_path)
 
     print('dir: %s exits' % model_save_path)
 
-    cudnn.benchmark = True
+    # TODO: understanding the data methods
+    # it will report no module named cudnn error
+    # cudnn.benchmark = True
+    """
+    From the docs we know in the pytorch >= 1.8.0
+    it changes into torch.backends.cudnn.benchmark
+    """
+    """
+    设置 torch.backends.cudnn.benchmark=True 将会让程序在开始时花费一点额外时间，
+    为整个网络的每个卷积层搜索最适合它的卷积实现算法，进而实现网络的加速。
+    适用场景是网络结构固定（不是动态变化的），网络的输入形状（包括 batch size，图片大小，输入的通道）是不变的，
+    其实也就是一般情况下都比较适用。反之，如果卷积层的设置一直变化，将会导致程序不停地做优化，反而会耗费更多的时间。
+    """
+    torch.backends.cudnn.benchmark = True
+
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     print('device setting successfully')
     model = pytorch_SRCNN().to(device)

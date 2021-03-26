@@ -39,13 +39,18 @@ class TrainDataset(Dataset):
                                     for img in self.train_images[:self.train_size]])
         self.train_label = np.array([img_process_label(cv.cvtColor(img, cv.COLOR_RGB2GRAY))
                                      for img in self.train_images[:self.train_size]])
-        self.train_data = torch.from_numpy(self.train_data).permute(0, 3, 1, 2).to(torch.float32)
-        self.train_label = torch.from_numpy(self.train_label).permute(0, 3, 1, 2).to(torch.float32)
+        # TODO: change the permute method
+        # self.train_data = torch.from_numpy(self.train_data).permute(0, 3, 1, 2).to(torch.float32)
+        # self.train_label = torch.from_numpy(self.train_label).permute(0, 3, 1, 2).to(torch.float32)
+        self.train_data = torch.from_numpy(self.train_data)
+        self.train_label = torch.from_numpy(self.train_label)
         # print(self.train_data[0].dtype)
         self.len = self.train_size
 
+    # TODO: Cause of the permute method, the dim of the file out of index
     def __getitem__(self, index):
-        return self.train_data[index], self.train_label[index]
+        return self.train_data[index].permute(2, 0, 1).to(torch.float32), \
+               self.train_label[index].permute(2, 0, 1).to(torch.float32)
 
     def __len__(self):
         return self.len
@@ -62,13 +67,16 @@ class TestDataset(Dataset):
                                    for img in self.test_images[:self.test_size]])
         self.test_label = np.array([img_process_label(cv.cvtColor(img, cv.COLOR_RGB2GRAY))
                                     for img in self.test_images[:self.test_size]])
-        self.test_data = torch.from_numpy(self.test_data).permute(0, 3, 1, 2).to(torch.float32)
-        self.test_label = torch.from_numpy(self.test_label).permute(0, 3, 1, 2).to(torch.float32)
+        # self.test_data = torch.from_numpy(self.test_data).permute(0, 3, 1, 2).to(torch.float32)
+        # self.test_label = torch.from_numpy(self.test_label).permute(0, 3, 1, 2).to(torch.float32)
+        self.test_data = torch.from_numpy(self.test_data)
+        self.test_label = torch.from_numpy(self.test_label)
 
         self.len = self.test_size
 
     def __getitem__(self, index):
-        return self.test_data[index], self.test_label[index]
+        return self.test_data[index].permute(2, 0, 1).to(torch.float32), \
+               self.test_label[index].permute(2, 0, 1).to(torch.float32)
 
     def __len__(self):
         return self.len
