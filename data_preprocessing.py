@@ -10,6 +10,9 @@ import cv2 as cv
 import tensorflow as tf
 import self_load_data
 
+"""
+    Tensorflow 需要写 data_loader method 去返回数据供给给模型进行训练
+"""
 
 """
     this python file is to set the data preprocessing
@@ -96,6 +99,8 @@ class SRCNNLoader:
         # cv.destroyAllWindows()
         """
 
+    # 可以用 get_batch 方法去返回对应的数据喂入模型进行训练
+    # 这里我们实现是通过random的方式返回随机的数据进行训练。
     def get_batch(self, batch_size):
         # # 从数据集中随机取出batch_size个元素并返回
         index = np.random.randint(0, self.num_train_data, batch_size)

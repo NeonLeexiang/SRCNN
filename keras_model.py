@@ -81,14 +81,14 @@ class SRCNN:
             self.save()
         return history
 
-    def process(self, input):
+    def process(self, inputs):
         """
         predict
 
-        :param input:
+        :param inputs:
         :return:
         """
-        predicted = self.model.predict(input)
+        predicted = self.model.predict(inputs)
         return predicted
 
     def load(self):

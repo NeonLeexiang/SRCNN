@@ -43,15 +43,30 @@ def train_and_test_pytorch_srcnn(
     num_workers=2,
     is_training=True,
     model_save_path='pytorch_models/'):
+    """
 
-    # TODO: the datasets size of cifar-10 is 500000
+    :param data_size:
+    :param test_data_size:
+    :param num_channels:
+    :param learning_rate:
+    :param batch_size:
+    :param num_epochs:
+    :param num_workers:
+    :param is_training:
+    :param model_save_path:
+    :return:
+    """
+    """
+        cifar-10 数据集包含 60000 张 32*32 的彩色图像，其中训练集图像 50000 张，
+        测试图像有 10000 张。所以之前的设定 100000 是没有意义的
+    """
     if not os.path.exists(model_save_path):
         print('making dir')
         os.makedirs(model_save_path)
 
     print('dir: %s exits' % model_save_path)
 
-    # TODO: understanding the data methods
+
     # it will report no module named cudnn error
     # cudnn.benchmark = True
     """
@@ -81,7 +96,12 @@ def train_and_test_pytorch_srcnn(
 
     print('loading data....')
     train_dataset = TrainDataset(data_size)
-    # TODO: to understand what is pin_memory and num_workers and drop_last
+    
+    """
+        * num_workers: 使用多进程加载的进程数，0代表不使用多进程
+        * pin_memory: 是否将数据保存在pin memory区，pin memory中的数据转到GPU会快一些
+        * drop_last: dataset中的数据个数可能不是batch_size的整数倍，drop_last为True会将多出来不足一个batch的数据丢弃
+    """
     train_dataloader = DataLoader(dataset=train_dataset,
                                   batch_size=batch_size,
                                   shuffle=True,

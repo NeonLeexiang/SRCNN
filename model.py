@@ -61,7 +61,7 @@ class SRCNN(tf.keras.Model):
 
     """
     def __init__(self):
-        super(SRCNN, self).__init__()
+        super(SRCNN, self).__init__()   # init the tf.keras.Model method
         """
             according to the paper, the structure of the model is 3 layers
             for every layer: 9*9 -> 1*1 -> 5*5
@@ -70,11 +70,12 @@ class SRCNN(tf.keras.Model):
             for padding, we set 'same'
             but if we do not want to have the same output img size we can set 'valid'
         """
+        # build the layers
         self.conv1 = tf.keras.layers.Conv2D(
             filters=64,
             kernel_size=[9, 9],
-            padding='same',
-            activation=tf.nn.relu,
+            padding='same',     # setting padding method by same or valid
+            activation=tf.nn.relu,  # add the activation by key word
         )
         self.conv2 = tf.keras.layers.Conv2D(
             filters=32,
@@ -90,6 +91,7 @@ class SRCNN(tf.keras.Model):
         )
 
     def call(self, inputs, training=None, mask=None):
+        # we need to build the call method likes __call__ method
         x = self.conv1(inputs)
         x = self.conv2(x)
         x = self.conv3(x)

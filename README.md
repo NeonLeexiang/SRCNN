@@ -14,7 +14,30 @@ For testing, `python trains.py`
 但是需要注释一些内容
 
 
+## Problems
+* 因为使用的是 `cifar10`的数据集，会出现的问题就是它的图像数据的大小是 32*32 的，
+  所以没有做一些放大缩小的操作获取对应的 High Resolution Image -> Low Resolution Image 的操作。
+  
+* 做的 `Keras` 和 `Tensorflow` 的训练并没有像 `Pytorch` 一样使用 `tqdm` 模块去做一些操作。  
+  
+* `pytorch` 要非常注意一点就是它的 Tensor 和 `tensorflow` 或者 `keras` 不一样，可能 `tensorflow` `keras` 是以
+  `Size * H * W * C` 而 `pytorch` 是以 `Size * C * H * W` 的方式去计算的，所以使用的数据需要通过 `torch.permute` 的 方式修改数据格式。  
+    
+  
+
 ## Result
+  
+做一个 `result table` :  
+
+| Dataset | Epochs | Module | Method     | psnr   |
+|---------|------- |------  |------      | ------ |
+| cifar10 | 500    | SRCNN  | tensorflow | 56.0   |
+| cifar10 | 500    | SRCNN  | keras      | 25.9   |
+| cifar10 | 500    | SRCNN  | pytorch    | 26.49  |
+
+  
+`tensorflow` 可能是因为数据集的问题导致 `psnr` 的计算会出现一些小的问题
+
 因为数据集的使用问题，所以模型的训练是没有意义的。  
 出于对`cifar`数据集的一个不了解，它是32*32的，但是我将它 bicubic 放大成了 128*128 作为 ground true。  
 然后训练数据 从 32*32 resize 到 32*32 用邻近插值，然后又 bicubic 放大成 128*128 作为训练数据，这个是无效的训练。

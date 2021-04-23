@@ -7,26 +7,27 @@ import self_load_data
 import cv2 as cv
 import numpy as np
 import torch
+from data_preprocessing import img_process_train, img_process_label
 
+# ------> we import the img preprocess method to avoid the duplicated code
 
-# TODO: solve the code duplicated
-# reconstruct the img_process_methods
-def img_process_train(img):
-    """
-        resize it into 32*32 then resize it into 128*128 by using inter_cubic
-        according to the paper we use bicubic methods to resize the img into the
-        same size with High Resolution Image, then training the CNN model and output
-        the Super Resolution image.
-    :param img:
-    :return:
-    """
-    train = cv.resize(img, (16, 16), interpolation=cv.INTER_NEAREST)
-    train = cv.resize(train, (32, 32), interpolation=cv.INTER_CUBIC)
-    return np.array(train).reshape((32, 32, 1)) / 255.
-
-
-def img_process_label(img):
-    return np.array(img).reshape((32, 32, 1)) / 255.
+# # reconstruct the img_process_methods
+# def img_process_train(img):
+#     """
+#         resize it into 32*32 then resize it into 128*128 by using inter_cubic
+#         according to the paper we use bicubic methods to resize the img into the
+#         same size with High Resolution Image, then training the CNN model and output
+#         the Super Resolution image.
+#     :param img:
+#     :return:
+#     """
+#     train = cv.resize(img, (16, 16), interpolation=cv.INTER_NEAREST)
+#     train = cv.resize(train, (32, 32), interpolation=cv.INTER_CUBIC)
+#     return np.array(train).reshape((32, 32, 1)) / 255.
+#
+#
+# def img_process_label(img):
+#     return np.array(img).reshape((32, 32, 1)) / 255.
 
 
 class TrainDataset(Dataset):
@@ -34,20 +35,21 @@ class TrainDataset(Dataset):
         super(TrainDataset, self).__init__()
         self.train_size = train_size
         (self.train_images, self.train_labels), (self.test_images, self.test_labels) = self_load_data.load_data('cifar-10-python.tar')
-        # print('data_preprocessing')
         self.train_data = np.array([img_process_train(cv.cvtColor(img, cv.COLOR_RGB2GRAY))
                                     for img in self.train_images[:self.train_size]])
         self.train_label = np.array([img_process_label(cv.cvtColor(img, cv.COLOR_RGB2GRAY))
                                      for img in self.train_images[:self.train_size]])
-        # TODO: change the permute method
+
+        # we change data before return by using the permute method
+
         # self.train_data = torch.from_numpy(self.train_data).permute(0, 3, 1, 2).to(torch.float32)
         # self.train_label = torch.from_numpy(self.train_label).permute(0, 3, 1, 2).to(torch.float32)
+
         self.train_data = torch.from_numpy(self.train_data)
         self.train_label = torch.from_numpy(self.train_label)
-        # print(self.train_data[0].dtype)
         self.len = self.train_size
 
-    # TODO: Cause of the permute method, the dim of the file out of index
+    # fix the index error cause by the different between [H, W, C] data -> [C, H, W]
     def __getitem__(self, index):
         return self.train_data[index].permute(2, 0, 1).to(torch.float32), \
                self.train_label[index].permute(2, 0, 1).to(torch.float32)
